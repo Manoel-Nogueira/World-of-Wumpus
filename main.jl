@@ -1,12 +1,19 @@
 #= Notação do mundo de wumpus:
 
-    Wumpus; Ö 🐻
-    Brisa: ≋ 🌫️ 💨
-    Fedor; § ♨️ 💩
-    Heroi; Ÿ 🤠
-    Vazio / Terreno: # 🟩
-    Ouro; ©
-    Buraco: O
+    Wumpus: 🐻
+    Brisa: 💨
+    Fedor: 💩
+    Heroi: 🤠
+    Vazio / Terreno: 🟩
+    Ouro: 💵
+    Buraco: 🌌
+
+    Encontros:
+
+    Brisa c/ Fedor: 👃
+    Brisa c/ Ouro: 💶
+    Fedor c/ Ouro: 💴
+    Brisa c/ Fedor c/ Ouro: 💷
 
 
 =#
@@ -79,45 +86,61 @@ function CreateHoles(world)
 
     world[drawn[1], drawn[2]] = '🌌'
 
-    if drawn[1] > 1
+    if drawn[1] > 1 && world[drawn[1] - 1, drawn[2]]  != '🐻' && world[drawn[1] - 1, drawn[2]] != '🌌'
 
-        if world[drawn[1] - 1, drawn[2]]  != '🐻' && world[drawn[1] - 1, drawn[2]] != '🌌'
+            if world[drawn[1] - 1, drawn[2]] == '💩'
+            
+                world[drawn[1] - 1, drawn[2]] = '👃'
 
-            world[drawn[1] - 1, drawn[2]] = '💨'
+            else
 
-        end
-    
+                world[drawn[1] - 1, drawn[2]] = '💨'
+
+            end
+
     end
 
-    if drawn[1] < 4
+    if drawn[1] < 4 && world[drawn[1] + 1, drawn[2]]  != '🐻' && world[drawn[1] + 1, drawn[2]] != '🌌'
 
-        if world[drawn[1] + 1, drawn[2]]  != '🐻' && world[drawn[1] + 1, drawn[2]] != '🌌'
+            if world[drawn[1] + 1, drawn[2]] == '💩'
+            
+                world[drawn[1] + 1, drawn[2]] = '👃'
 
-            world[drawn[1] + 1, drawn[2]] = '💨'
+            else
 
-        end
-    
+                world[drawn[1] + 1, drawn[2]] = '💨'
+
+            end
+
     end
 
-    if drawn[2] > 1 
+    if drawn[2] > 1 && world[drawn[1], drawn[2] - 1] != '🐻' && world[drawn[1], drawn[2] - 1] != '🌌' 
 
-        if world[drawn[1], drawn[2] - 1] != '🐻' && world[drawn[1], drawn[2] - 1] != '🌌' 
- 
-            world[drawn[1], drawn[2] - 1] = '💨'
+            if world[drawn[1], drawn[2] - 1] == '💩'
+            
+                world[drawn[1], drawn[2] - 1] = '👃'
 
-        end
-    
+            else
+
+                world[drawn[1], drawn[2] - 1] = '💨'
+
+            end
+
     end
 
 
-    if drawn[2] < 4
+    if drawn[2] < 4 && world[drawn[1], drawn[2] + 1] != '🐻' && world[drawn[1], drawn[2] + 1] != '🌌'
 
-        if  world[drawn[1], drawn[2] + 1] != '🐻' && world[drawn[1], drawn[2] + 1] != '🌌'
+        if world[drawn[1], drawn[2] + 1] == '💩'
+        
+            world[drawn[1], drawn[2] + 1] = '👃'
+
+        else
 
             world[drawn[1], drawn[2] + 1] = '💨'
 
         end
-    
+
     end
     
 end
@@ -127,11 +150,25 @@ function CreateGold(world)
 
     drawn = DrawLots()
 
-    world[drawn[1], drawn[2]] = '💰'
+    if world[drawn[1], drawn[2]] == '💨'
 
+        world[drawn[1], drawn[2]] = '💶'
+
+    elseif  world[drawn[1], drawn[2]] == '💩'
+
+        world[drawn[1], drawn[2]] = '💴'
+
+    elseif  world[drawn[1], drawn[2]] == '👃'
+
+        world[drawn[1], drawn[2]] = '💷'
+
+    else
+
+        world[drawn[1], drawn[2]] = '💵'
+
+    end
     
 end
-
 
 function Run()
 
