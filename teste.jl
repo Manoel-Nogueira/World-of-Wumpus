@@ -32,7 +32,8 @@ COORDINATES  = [                    [1, 3], [1, 4],
                 ]
 
 POSITIONS = OrderedDict([([1, 1], '🟩')])
-SAFE_POSITIONS = [('🟩', [1, 1])]
+SAFE_POSITIONS = []
+CHOSEN_DIRECTION = []
 BEST_WAY = [[1, 1]]
 HAVE_BREEZE = []
 HAVE_HOLES = []
@@ -223,6 +224,10 @@ function CreateGold(world)
 
         world[drawn[1], drawn[2]] = '💰'
 
+    else
+
+        world[drawn[1], drawn[2]] = '💵'
+
     end
     
 end
@@ -358,12 +363,6 @@ function HunterMove(world, direction)
         elseif world[playerPosition[1] + 1, playerPosition[2]] in TRAPS
 
             world[playerPosition[1] + 1, playerPosition[2]] = '🤠'
-            println("!!! O caçador morreu :| !!!")
-            return false;
-
-        elseif world[playerPosition[1] + 1, playerPosition[2]] in TRAPS
-
-            world[playerPosition[1] + 1, playerPosition[2]] = '🤠'
             world[playerPosition[1], playerPosition[2]] = POSITIONS[[playerPosition[1], playerPosition[2]]]
             println("!!! O caçador morreu :| !!!")
             return false;
@@ -489,12 +488,77 @@ function HunterMove(world, direction)
     
 end
 
+# Função para salvar os adjacentes de uma posição
+function SaveAdjacents(position, direction)
+
+    if position[1] > 1
+
+        SAFE_POSITIONS = [[position[1] - 1, position[2]]]
+        push!(direction, 'U')
+
+    end
+
+    if position[1] < 4
+
+        SAFE_POSITIONS = [[position[1] + 1, position[2]]]
+        push!(direction, 'D')
+
+    end
+
+    if position[2] > 1
+
+        SAFE_POSITIONS = [[position[1], position[2] - 1]]
+        push!(direction, 'L')
+
+    end
+
+    if position[2] < 4
+
+        SAFE_POSITIONS = [[position[1], position[2] + 1]]
+        push!(direction, 'R')
+
+    end
+    
+end        
+
+# Função para fazer as inferências
+function MakeInference(world)
+
+    direction = []
+     
+    hunter = Position('🤠', world)
+
+    exploring = POSITIONS[[hunter[1], hunter[2]]]
+
+    choice = 'M'
+
+    if exploring == '🟩'
+
+        #SAFE_POSITIONS = [[hunter]]
+        SaveAdjacents(hunter, direction)
+
+        choice = rand(direction)
+        push!(CHOSEN_DIRECTION, choice)
+        
+
+    else
+
+        #SaveAdjacents(hunter, direction)
+        #deleteat!(direction, Position(last(CHOSEN_DIRECTION), direction)) 
+        choice = pop!(CHOSEN_DIRECTION)
+
+    end
+
+    return choice
+    
+end
+
 
 function Run()
 
     world = fill('🟩', 4, 4)
     world[1, 1] = '🤠'
-    game = 1
+    game = true
 
     CreateWumpus(world)
 
@@ -507,18 +571,11 @@ function Run()
     PrintWorld(world)
     println(' ')
 
-    direction = DirectionRaffle(false)
-
-    HunterMove(world, direction)
-
-    PrintWorld(world)
-    println(' ')
-
-    while game < 100
+    while game
 
         println(POSITIONS)
 
-        direction = DirectionRaffle(true)
+        direction = MakeInference(world)
 
         if !(HunterMove(world, direction)) 
 
@@ -532,8 +589,28 @@ function Run()
         #ClearConsole()
         PrintWorld(world)
         println(' ')
-        
-        game += 1
+
+        if FOUND_GOLD 
+
+            println("C:", CHOSEN_DIRECTION)
+
+            while !isempty(CHOSEN_DIRECTION)
+                
+                aux = pop!(CHOSEN_DIRECTION)
+
+                HunterMove(world, aux)
+
+                PrintWorld(world)
+                println(' ')    
+
+            end
+
+            Println("🎉 O caçador ganhou o jogo 🎉")
+
+            game = false
+
+        end
+    
 
     end
     
