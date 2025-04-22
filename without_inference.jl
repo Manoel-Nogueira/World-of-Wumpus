@@ -367,7 +367,7 @@ function MakeInference(world)
     elseif exploring == '🟢'
 
         println("✨ O caçador encontrou o tesouro ✨")
-        choice = pop!(CHOSEN_DIRECTION)
+        #choice = pop!(CHOSEN_DIRECTION)
         FOUND_GOLD = true
 
     elseif length(CHOSEN_DIRECTION) > 0 
